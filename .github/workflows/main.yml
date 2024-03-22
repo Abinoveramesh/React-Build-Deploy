@@ -33,7 +33,7 @@ jobs:
 
       # Add deployment steps here if needed
       - name: Deploy to production server
-        uses: easingthemes/ssh-deploy@v5.0.0
+        uses: appleboy/ssh-action@master
         with:
           sshPrivateKey: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
           remoteHost: ${{ secrets.PRODUCTION_SSH_HOST }}
