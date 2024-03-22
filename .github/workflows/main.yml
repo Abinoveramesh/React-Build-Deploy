@@ -1,41 +1,43 @@
-name: angular
+name: react
 
 on:
   push:
     branches:
       - main
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "14.x" # You can adjust the Node.js version as needed for your React app
+          node-version: "14.x" # Adjust the Node.js version as needed for your React app
 
-      - uses: actions/cache@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Install dependencies
+        run: npm install
 
-      - run: npm cache clean --force
-      - run: npm install --legacy-peer-deps
-      - run: npm install -g @angular/cli > /dev/null
-      - run: ng build --base-href=/my-react-app/
-      
-      
-      - name: Deploy to development-server
+      - name: Build React app
+        run: npm run build --if-present
+
+      # Add deployment steps here if needed
+      - name: Deploy to production server
         uses: easingthemes/ssh-deploy@v5.0.0
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.STAGE_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
           SOURCE: "build/*"
-          REMOTE_HOST: ${{ secrets.STAGE_SSH_HOST }}
-          REMOTE_USER: ${{ secrets.STAGE_SSH_USERNAME }}
-          REMOTE_PORT: ${{ secrets.STAGE_PORT }}
-          TARGET: ${{ secrets.STAGE_TARGET }}
+          REMOTE_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          REMOTE_USER: ${{ secrets.PRODUCTION_SSH_USERNAME }}
+          REMOTE_PORT: ${{ secrets.PRODUCTION_PORT }}
+          TARGET: ${{ secrets.PRODUCTION_TARGET }}
