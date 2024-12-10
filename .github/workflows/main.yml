@@ -23,16 +23,6 @@ jobs:
         id: get-date-time
         run: echo "current_date_time=$(date '+%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
 
-      - name: Determine if first push
-        id: check-first-push
-        run: |
-          git fetch origin main --depth=1
-          if [ "$(git rev-list --count HEAD ^origin/main)" -eq 0 ]; then
-            echo "is_first_push=true" >> $GITHUB_ENV
-          else
-            echo "is_first_push=false" >> $GITHUB_ENV
-          fi
-
       - name: Upload build artifacts
         if: env.is_first_push == 'true'
         uses: actions/upload-artifact@v3
